@@ -48,9 +48,13 @@ classes = [
     'two of clubs', 'two of diamonds', 'two of hearts', 'two of spades'
 ]
 
+# Preprocessing (must match training time)
 transform = transforms.Compose([
     transforms.Resize((128, 128)),
     transforms.ToTensor(),
+    # Uncomment if you applied normalization during training:
+    # transforms.Normalize([0.485, 0.456, 0.406],
+    #                      [0.229, 0.224, 0.225])
 ])
 
 # Streamlit UI
@@ -58,10 +62,10 @@ st.title("🃏 Playing Card Classifier")
 uploaded_file = st.file_uploader("Upload a playing card image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
-    st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+    st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)  # <- changed here
 
     image = Image.open(uploaded_file).convert("RGB")
-    input_tensor = transform(image).unsqueeze(0)
+    input_tensor = transform(image).unsqueeze(0)  # (1, C, H, W)
 
     with torch.no_grad():
         output = model(input_tensor)
